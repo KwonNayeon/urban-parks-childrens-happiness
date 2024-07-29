@@ -31,3 +31,31 @@ This folder contains the R scripts used for data pre-processing, analysis, and c
 
 ## Notes
 - The original analysis was developed using the R Markdown (`.Rmd`) format. If you encounter any errors or issues running the R scripts, please refer to the corresponding `.Rmd` files for the correct code and execution flow.
+
+## Required Libraries
+
+Ensure the following libraries are installed before running the analysis scripts:
+
+```r
+install.packages(c(
+  "tidyverse",
+  "readxl",
+  "haven",
+  "CBPS",
+  "lubridate",
+  "skimr",
+  "tableone",
+  "survey",
+  "senstrat",
+  "MASS",
+  "ggdag",
+  "dagitty",
+  "broom",
+  "scales",
+  "truncnorm",
+  "ipw",
+  "WeightIt",
+  "cobalt",
+  "optmatch",
+  "MatchIt"
+))
