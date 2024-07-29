@@ -1,6 +1,6 @@
 # Data Directory
 
-This directory contains datasets used in the analysis. Each dataset is described below, along with instructions on how to use them.
+This directory contains datasets used in the analysis. Each dataset is described below.
 
 ## Datasets
 
