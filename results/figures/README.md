@@ -10,8 +10,8 @@ This directory contains all the figures used in the thesis. The figures are orga
 ## Figure Organization
 
 - **Main Document Figures**
-  - `Figure 1_absolute SMD before and after matching.png`: Absolute Standardized Mean Differences (SMD) before and after matching, illustrating the balance of covariates.
-  - `Figure 2_absolute SMD before and after matching.png`: Absolute Standardized Mean Differences (SMD) before and after matching, illustrating the balance of covariates.
+  - `Figure 1_absolute SMD before and after matching.png`: This figure illustrates the balance of covariates in the main analysis by showing the absolute SMD before and after matching.
+  - `Figure 2_absolute SMD before and after matching.png`: This figure demonstrates the balance of covariates in the sensitivity analysis, depicting the absolute SMD before and after matching.
 
 - **Appendix Figures**
   - `Figure A1_Histogram of park area per capita.png`: Histogram showing the distribution of park area per capita.
@@ -22,7 +22,7 @@ This directory contains all the figures used in the thesis. The figures are orga
   - `Figure D1-b_Histogram of CBPS distribution.png`: Histogram of Covariate Balancing Propensity Score (CBPS) distribution for the sensitivity analysis.
   - `Figure E1-a_Histogram of PS distribution.png`: Histogram of Propensity Score (PS) distribution for an additional analysis with a different treatment allocation criterion.
   - `Figure E1-b_Histogram of CBPS distribution.png`: Histogram of Covariate Balancing Propensity Score (CBPS) distribution for an additional analysis with a different treatment allocation criterion.
-  - `Figure E2_absolute SMD before and after matching.png`: Absolute Standardized Mean Differences (SMD) before and after matching, illustrating the balance of covariates.
+  - `Figure E2_absolute SMD before and after matching.png`: This figure presents the balance of covariates in the additional analysis, highlighting the absolute SMD before and after matching.
 
 ## Locating Figures in the Documents
 
