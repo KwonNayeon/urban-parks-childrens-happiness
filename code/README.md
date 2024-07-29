@@ -1,4 +1,4 @@
-# Urban Parks and Children's Happiness - Code
+# Code Directory
 
 This folder contains the R scripts used for data pre-processing, analysis, and creating plots for the thesis "Causal Effect of Urban Parks on Children’s Happiness."
 
