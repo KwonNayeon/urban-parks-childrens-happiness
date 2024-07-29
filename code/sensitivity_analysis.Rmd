@@ -1,0 +1,617 @@
+---
+title: "sensitivity-analysis"
+output: pdf_document
+---
+
+# Quantile-based Treatment Assignment
+
+```{r quantiles, message=FALSE, warning=FALSE}
+# Calculate quantiles for papc
+quantiles <- quantile(merged$papc)
+round_quantiles <- round(quantiles, 3)
+
+# Assign treatment based on quantile thresholds
+merged$papc <- ifelse(merged$papc <= round_quantiles[2], 0, 
+                      ifelse(merged$papc > round_quantiles[2] & merged$papc < round_quantiles[4], 2, 1))
+
+# Display treatment distribution
+table(merged$papc)
+
+# Subset data by treatment groups
+control <- subset(merged, papc == 0)
+treatment <- subset(merged, papc == 1)
+non_treatment <- subset(merged, papc == 2)
+
+# Exclude non-treatment group
+merged2 <- subset(merged, papc != 2)
+table(merged2$papc)
+```
+
+
+# Data frame 1
+
+```{r Data frame 1, message=FALSE, warning=FALSE}
+# Define variables for propensity score model
+y <- merged2$y  # 아동의 행복감
+papc <- merged2$papc  # Treatment: 인당 공원면적
+housing <- merged2$housing
+ca <- merged2$ca
+income <- merged2$DHu14ses006
+Fschool <- merged2$DFt14dmg014  # 부 최종학력
+Mschool <- merged2$DMt14dmg014  # 모 최종학력
+Kacs <- merged2$HIn14acs  # 아동의 학업능력(문해 및 언어능력)
+Fstress <- merged2$FFt14prs  # 부 양육스트레스
+Msff <- merged2$EMt14sff  # 모 양육효능감
+Mhappiness <- merged2$EMt14shs  # 모 행복감
+Mcrs <- merged2$EMt14crs  # 모 통제적 양육행동
+Maff <- merged2$EMt14aff  # 모 애정적 양육행동
+Minteg <- merged2$EMt14integ  # 모 통합적 양육행동
+Fhappiness <- merged2$FFt14shs  # 부 행복감
+Faff <- merged2$FFt14aff  # 부 애정적 부모간 양육행동
+Ksfs <- merged2$JCh14sfs  # 아동의 자아존중감
+Kssr <- merged2$HIn14ssr  # 아동의 사회적 유능감
+Kprefe <- merged2$HIn14chc  # 아동의 기관 선호도
+
+# Combine variables into a data frame
+PSKC.data <- data.frame(
+  y = y, papc = papc, housing = housing, ca = ca, income = income, 
+  Fschool = Fschool, Mschool = Mschool, Kacs = Kacs, Fstress = Fstress, 
+  Msff = Msff, Mhappiness = Mhappiness, Mcrs = Mcrs, Maff = Maff, 
+  Minteg = Minteg, Fhappiness = Fhappiness, Faff = Faff, Ksfs = Ksfs, 
+  Kssr = Kssr, Kprefe = Kprefe
+)
+
+# Convert specific variables to factors
+for (i in c(4, 6:7)) {
+  PSKC.data[[colnames(PSKC.data)[i]]] <- factor(PSKC.data[[colnames(PSKC.data)[i]]])
+}
+
+# Summary of data frame
+summary(PSKC.data)
+
+# Feature property: Categorical variables
+PSKC.data %>% skim(ca, Fschool, Mschool)
+```
+
+
+# PS, CBPS
+
+```{r ps and cbps, message=FALSE, warning=FALSE}
+library(CBPS)
+
+PSKC.data <- PSKC.data %>%
+  mutate(
+    # PS
+    ps = predict(glm(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, 
+                     data = PSKC.data, family = binomial), type = "response"),
+    # CBPS
+    cbps = CBPS(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, 
+                ATT = 0, data = PSKC.data)$fitted.values
+  )
+
+PSKC.data %>% skim(ps, cbps)
+```
+
+
+# Add treatment level to the dataframe
+
+```{r TrtLevel, message=FALSE, warning=FALSE}
+PSKC.data$TrtLevel <- factor(PSKC.data$papc)
+PSKC.data %>% skim(TrtLevel)
+```
+
+# Plots
+
+```{r Plots, message=FALSE, warning=FALSE}
+# Plot for Y
+ggplot(PSKC.data, aes(y, fill = TrtLevel)) +
+  geom_density(alpha = 0.3) +
+  xlab("y")
+
+# PS plot
+ggplot(PSKC.data, aes(ps, fill = TrtLevel)) +
+  geom_density(alpha = 0.3) +
+  labs(x = "propensity score", title = "Propensity Score Overlap by Treatment", y = "")
+
+# CBPS plot
+ggplot(PSKC.data, aes(cbps, fill = TrtLevel)) +
+  geom_density(alpha = 0.3) +
+  labs(x = "covariate balance propensity score", title = "CBPS Overlap by Treatment", y = "")
+
+# Plot for income
+ggplot(PSKC.data, aes(income, fill = TrtLevel)) +
+  geom_density(alpha = 0.3) +
+  xlab("income")
+
+# Plot for Kacs
+ggplot(PSKC.data, aes(Kacs, fill = TrtLevel)) +
+  geom_density(alpha = 0.3) +
+  xlab("Kacs")
+
+# Plot for Fstress
+ggplot(PSKC.data, aes(Fstress, fill = TrtLevel)) +
+  geom_density(alpha = 0.3) +
+  xlab("Fstress")
+
+# CA proportion by TrtLevel
+df <- PSKC.data %>%
+  group_by(TrtLevel, ca) %>%
+  summarise(count = n()) %>%
+  mutate(freq = count / sum(count))
+df
+
+# Fschool proportion by TrtLevel
+df2 <- PSKC.data %>%
+  group_by(TrtLevel, Fschool) %>%
+  summarise(count = n()) %>%
+  mutate(freq = count / sum(count))
+df2
+```
+
+# regression adjustment
+
+```{r Regression adjustment, message=FALSE, warning=FALSE}
+# Linear Model with Multiple Predictors
+lm1 <- lm(
+  y ~ factor(papc) + housing + ca + income + Fschool + Mschool + Kacs + Fstress +
+    Msff + Mhappiness + Mcrs + Maff + Minteg + Fhappiness + Faff + Ksfs + Kssr + Kprefe, 
+  data = PSKC.data
+)
+
+# Summary of the linear model
+summary(lm1)
+
+# Estimate Y(1), Y(0) & ATE
+data1 <- PSKC.data
+data1$papc <- 1
+est.y1.lm <- predict(lm1, data1)
+
+data0 <- PSKC.data
+data0$papc <- 0
+est.y0.lm <- predict(lm1, data0)
+
+# Calculate ATE
+est.ATE.lm1 <- mean(est.y1.lm) - mean(est.y0.lm)
+
+# Display results
+round(est.ATE.lm1, 3)
+round(confint(lm1, level = 0.95), 3)
+round(2.499e-01, 3)
+```
+
+
+# propensity score model
+
+```{r Estimate PS, message=FALSE, warning=FALSE}
+# Propensity Score Estimation
+propscore.model <- glm(
+  factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, 
+  family = binomial(link = "logit"), 
+  x = TRUE, 
+  data = PSKC.data
+)
+est.ps <- predict(propscore.model, type = "response")
+
+# Propensity Score Plot
+hist(est.ps[PSKC.data$papc == 0], col = rgb(1, 0, 0, 0.2), breaks = 25, xlim = c(0, 1), 
+     xlab = "Propensity Score", main = "Treated (blue) vs. Control (red)")
+hist(est.ps[PSKC.data$papc == 1], col = rgb(0, 0, 1, 0.2), breaks = 25, xlim = c(0, 1), add = TRUE)
+
+# Check min & max of propensity scores
+# Control group
+round(max(est.ps[PSKC.data$papc == 0]), 3)
+round(min(est.ps[PSKC.data$papc == 0]), 3)
+
+# Treated group
+round(max(est.ps[PSKC.data$papc == 1]), 3)
+round(min(est.ps[PSKC.data$papc == 1]), 3)
+
+# CBPS Estimation
+cbps.model <- CBPS(
+  factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, 
+  ATT = 0, 
+  data = PSKC.data
+)
+est.cbps <- fitted(cbps.model)
+
+# CBPS Plot
+hist(est.cbps[PSKC.data$papc == 0], col = rgb(1, 0, 0, 0.2), breaks = 25, xlim = c(0, 1), 
+     xlab = "CBPS", main = "Treated (blue) vs. Control (red)")
+hist(est.cbps[PSKC.data$papc == 1], col = rgb(0, 0, 1, 0.2), breaks = 25, xlim = c(0, 1), add = TRUE)
+
+# Check min & max of CBPS
+# Control group
+round(max(est.cbps[PSKC.data$papc == 0]), 3)
+round(min(est.cbps[PSKC.data$papc == 0]), 3)
+
+# Treated group
+round(max(est.cbps[PSKC.data$papc == 1]), 3)
+round(min(est.cbps[PSKC.data$papc == 1]), 3)
+```
+
+
+# ATE Calculation Using Weighting Methods by Hand with glm
+
+```{r ATE Calculation Using Weighting Methods by Hand with glm, message=FALSE, warning=FALSE}
+# Propensity Score Model
+# propscore.model = glm(factor(papc) ~ ca + income + Fschool + Mschool
+#                      + Kacs + Fstress, family = binomial(link = "logit"), 
+#                      x = TRUE, data = PSKC.data)
+# est.ps <- predict(propscore.model, type = "response")
+
+n <- length(papc)
+
+# Inverse Probability Weighting (IPW)
+IP.weight <- rep(NA, n)
+IP.weight[papc == 1] <- 1 / est.ps[papc == 1]
+IP.weight[papc == 0] <- -1 / (1 - est.ps[papc == 0])
+est.ATE.IPW <- mean(IP.weight * y)
+
+# Stabilized IPW (SIPW)
+stabilized.IP.weight <- rep(NA, n)
+stabilized.IP.weight[papc == 1] <- IP.weight[papc == 1] / sum(IP.weight[papc == 1])
+stabilized.IP.weight[papc == 0] <- -IP.weight[papc == 0] / sum(IP.weight[papc == 0])
+est.ATE.SPIW <- sum(stabilized.IP.weight * y)
+
+# Doubly Robust Estimation
+est.y1.dr <- mean((papc * y - (papc - est.ps) * est.y1.lm) / est.ps)
+est.y0.dr <- mean(((1 - papc) * y + (papc - est.ps) * est.y0.lm) / (1 - est.ps))
+est.ATE.dr <- est.y1.dr - est.y0.dr
+
+# Results Summary
+round(c(est.ATE.lm1, est.ATE.IPW, est.ATE.SPIW, est.ATE.dr), 3)
+```
+
+# ATE Calculation Using Weighting Methods by Hand with CBPS
+
+```{r ATE Calculation Using Weighting Methods by Hand with CBPS, message=FALSE, warning=FALSE}
+# CBPS Model
+cbps.model <- CBPS(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, ATT = 0, data = PSKC.data)
+est.cbps <- fitted(cbps.model)
+
+# Number of observations
+# n <- length(papc)
+
+# Inverse Probability Weighting (IPW)
+IP.weight <- rep(NA, n)
+IP.weight[papc == 1] <- 1 / est.cbps[papc == 1]
+IP.weight[papc == 0] <- -1 / (1 - est.cbps[papc == 0])
+est.ATE.IPW <- mean(IP.weight * y)
+
+# Stabilized IPW (SIPW)
+stabilized.IP.weight <- rep(NA, n)
+stabilized.IP.weight[papc == 1] <- IP.weight[papc == 1] / sum(IP.weight[papc == 1])
+stabilized.IP.weight[papc == 0] <- -IP.weight[papc == 0] / sum(IP.weight[papc == 0])
+est.ATE.SPIW <- sum(stabilized.IP.weight * y)
+
+# Doubly Robust Estimation
+est.y1.dr <- mean((papc * y - (papc - est.cbps) * est.y1.lm) / est.cbps)
+est.y0.dr <- mean(((1 - papc) * y + (papc - est.cbps) * est.y0.lm) / (1 - est.cbps))
+est.ATE.dr <- est.y1.dr - est.y0.dr
+
+# Results Summary
+round(c(est.ATE.lm1, est.ATE.IPW, est.ATE.SPIW, est.ATE.dr), 3)
+```
+
+# Bootstrap for Confidence interval
+
+```{r Bootstrap for Confidence interval, message=FALSE, warning=FALSE}
+## Bootstrap Estimate of Standard Error for IPW, SIPW, and DR
+pseudo_ATE <- function(iter, PSKC.data, method = "PS") {
+  
+  ## Setting
+  n <- nrow(PSKC.data) 
+  ipw <- numeric(iter)
+  sipw <- numeric(iter)
+  dr <- numeric(iter)
+  
+  ## Loop over iterations
+  for (b in 1:iter) {
+    set.seed(b)
+    
+    # Randomly select the indices
+    dt <- PSKC.data[sample(1:n, size = n, replace = TRUE),]
+    
+    # Choose propensity score
+    if (method == "PS") {
+      dt$ps <- glm(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, family = binomial, data = dt)$fitted.values
+    } else if (method == "CBPS") {
+      dt$ps <- CBPS(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, ATT = 0, data = dt)$fitted.values
+    }
+    
+    # Data set
+    data <- dt %>% 
+      mutate(ipw = ifelse(papc == 1, 1 / ps, 1 / (1 - ps)),
+             simReg = predict(lm(y ~ factor(papc) + housing + ca + income + Fschool + Mschool + Kacs + Fstress + Msff + Maff + Minteg + Faff + Mhappiness + Mcrs + Fhappiness + Ksfs + Kssr + Kprefe, data = dt)))
+    data <- data %>% 
+      mutate(sipw = ifelse(papc == 1, ipw / sum(filter(data, papc == 1)$ipw), ipw / sum(filter(data, papc == 0)$ipw)))
+    
+    # Doubly robust setting: confounder X & mu(z)(Xi)
+    SimReg <- lm(y ~ factor(papc) + housing + ca + income + Fschool + Mschool + Kacs + Fstress + Msff + Maff + Minteg + Faff + Mhappiness + Mcrs + Fhappiness + Ksfs + Kssr + Kprefe, data = data)
+    
+    X <- data[c('papc', 'housing', 'ca', 'income', 'Fschool', 'Mschool', 'Kacs', 'Fstress', 'Msff', 'Maff', 'Minteg', 'Faff', 'Mhappiness', 'Mcrs', 'Fhappiness', 'Ksfs', 'Kssr', 'Kprefe')]
+    
+    mu1 <- predict(SimReg, mutate(X, papc = as.factor(1)))
+    mu0 <- predict(SimReg, mutate(X, papc = as.factor(0)))
+    
+    # ATE with IPW, SIPW, and Doubly Robust  
+    ipw[b] <- (with(filter(data, papc == 1), sum(y * ipw)) - with(filter(data, papc == 0), sum(y * ipw))) / n
+    sipw[b] <- (with(filter(data, papc == 1), sum(y * sipw)) - with(filter(data, papc == 0), sum(y * sipw)))
+    dr[b] <- (with(filter(data, papc == 1), sum((y - simReg) * ipw)) - with(filter(data, papc == 0), sum((y - simReg) * ipw)) + sum(mu1) - sum(mu0)) / n
+  }
+  
+  ## Confidence Interval
+  res <- data.frame(
+    IPW = c(round(mean(ipw), 3), round(sd(ipw), 3), round(mean(ipw) - qnorm(0.975) * sd(ipw), 3), round(mean(ipw) + qnorm(0.975) * sd(ipw), 3)),
+    SIPW = c(round(mean(sipw), 3), round(sd(sipw), 3), round(mean(sipw) - qnorm(0.975) * sd(sipw), 3), round(mean(sipw) + qnorm(0.975) * sd(sipw), 3)),
+    DR = c(round(mean(dr), 3), round(sd(dr), 3), round(mean(dr) - qnorm(0.975) * sd(dr), 3), round(mean(dr) + qnorm(0.975) * sd(dr), 3))
+  )
+  rownames(res) <- c(paste0("Point Est based on ", method), "Standard Error", "95% Lower", "95% Upper")
+  
+  ## Result 
+  return(res)
+}
+
+# Run the function
+pseudo_ATE(iter = 100, PSKC.data, method = "PS") 
+pseudo_ATE(iter = 100, PSKC.data, method = "CBPS")
+```
+
+
+# The outcome model using the inverse probability weights by hand
+
+```{r IPW with the WeightIt package, message=FALSE, warning=FALSE}
+# Outcome Model Using Inverse Probability Weights (IPW) Manually
+
+## Calculate IPW
+ipw.papc <- augment_columns(propscore.model, PSKC.data, type.predict = "response") %>%
+  rename(propensity = .fitted) %>%
+  mutate(
+    ipw = (papc / propensity) + ((1 - papc) / (1 - propensity))
+  )
+
+## Fit the Outcome Model Using IPW
+model.ipw.papc <- lm(y ~ papc, data = ipw.papc, weights = ipw)
+
+## Summarize the Model
+tidy(model.ipw.papc) # Coefficients and statistics
+round(confint(model.ipw.papc, level = 0.95), 3) # 95% Confidence Intervals
+
+## Check Balance
+# Display the first few rows of the data
+head(PSKC.data)
+
+# Compute balance for covariates
+covs <- subset(PSKC.data, select = c(housing, ca, income, Fschool, Mschool, Kacs, Fstress))
+bal.tab(covs, treat = PSKC.data$papc, weights = ipw.papc$ipw)
+```
+
+
+# Matching with the Matchit package
+# Using only the propensity score
+# Propensity Score Matching (PSM)
+
+```{r PSM, message=FALSE, warning=FALSE}
+# Estimate the propensity score model
+# propscore.model = glm(factor(papc) ~ ca + income + Fschool + Mschool
+#                       + Kacs + Fstress, family = binomial(link = "logit"), x = TRUE, data = PSKC.data)
+
+# Calculate the distance for matching
+ps.dist = match_on(est.ps, z = PSKC.data$papc)
+
+# Perform the matching
+psm.out = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                   data = PSKC.data, method = "optimal", estimand = "ATT", distance = ps.dist)
+
+# Summarize the matching result
+summary(psm.out)
+
+# Create a Love plot to assess balance
+plot(summary(psm.out), var.order = "unmatched")
+
+# Display a balance table with specified thresholds
+bal.tab(psm.out, thresholds = c(m = 0.1), un = TRUE)
+```
+
+# Covariate Balancing Propensity Score Matching (CBPSM)
+# Using the Matchit Package
+
+```{r CBPSM, message=FALSE, warning=FALSE}
+# Perform Covariate Balancing Propensity Score Matching (CBPSM)
+# Using optimal matching and the "cbps" distance method to estimate the Average Treatment Effect on the Treated (ATT)
+
+cbpsm.out = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                    data = PSKC.data, 
+                    method = "optimal", 
+                    distance = "cbps", 
+                    estimand = "ATT")
+
+# Summarize the results of the matching
+summary(cbpsm.out, un = FALSE)
+
+# Plot the balance summary
+plot(summary(cbpsm.out), var.order = "unmatched")
+
+# Display the balance table with specified thresholds
+bal.tab(cbpsm.out, thresholds = c(m = 0.1), un = TRUE)
+```
+
+# Method: Propensity Score Caliper Matching
+# Using Rank-Based Mahalanobis Distance Within Propensity Score Calipers
+
+```{r Mahalanobis distance, message=FALSE, warning=FALSE}
+# Compute the Rank-Based Mahalanobis Distance
+# Uncomment if using the optmatch package for computation.
+# smahal.dist <- optmatch::match_on(
+#                   papc ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+#                   method = "rank_mahalanobis")
+
+# Calculate the Mahalanobis distance based on the rank-based method
+smahal.dist <- match_on(papc ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                        method = "rank_mahalanobis")
+
+# Perform matching using the rank-based Mahalanobis distance
+mc.out = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                  data = PSKC.data, 
+                  method = "optimal", 
+                  distance = smahal.dist, 
+                  replace = FALSE)
+
+# Summarize the matching results
+# Uncomment the following line to view the summary
+# summary(mc.out, un = FALSE)
+
+# Plot the balance of unmatched variables
+plot(summary(mc.out), var.order = "unmatched")
+
+# Apply calipers to the Mahalanobis distance and re-match
+smahal.dist3 = smahal.dist + caliper(ps.dist, width = 0.6)
+mc.out3 = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                   data = PSKC.data, 
+                   method = "optimal", 
+                   distance = as.matrix(smahal.dist3))
+
+# Summarize the matching results with calipers
+summary(mc.out3, un = FALSE)
+
+# Plot the balance of unmatched variables after applying calipers
+plot(summary(mc.out3), var.order = "unmatched")
+
+# Display the balance table with specified thresholds
+bal.tab(mc.out3, thresholds = c(m = 0.1), un = TRUE)
+```
+
+
+# Subset for matching
+
+```{r packages, message=FALSE, warning=FALSE}
+# Subset the PSKC.data data frame by excluding specified columns
+matching.data <- subset(PSKC.data, 
+                        select = -c(housing, Msff, Mhappiness, Mcrs, Maff, Minteg, 
+                                    Fhappiness, Faff, Ksfs, Kssr, Kprefe, ps, cbps, TrtLevel))
+
+# Display the resulting subsetted data frame
+matching.data
+```
+
+# Method: CEM
+
+```{r CEM, message=FALSE, warning=FALSE}
+# Coarsened Exact Matching (CEM) on covariates
+# Excluding the capital area indicator variable
+# Group parental education into "university graduate" and "graduate school graduate"
+# Options for binning: fd, sturges, scott
+
+cem.out = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                  data = PSKC.data, 
+                  method = "cem", 
+                  estimand = "ATT", 
+                  cutpoints = list(income = "q4", Kacs = "q4", Fstress = "q4"),
+                  grouping = list(Mschool = list("4", "5", "6", "7"), 
+                                  Fschool = list("4", "5", "6", "7")),
+                  k2k = TRUE)
+
+# Summarize the CEM results
+summary(cem.out, un = FALSE)
+
+# Plot the balance for unmatched variables
+plot(summary(cem.out), var.order = "unmatched")
+
+# Display the balance table with specified thresholds
+bal.tab(cem.out, thresholds = c(m = 0.1), un = TRUE)
+```
+
+# Cardinality matching
+
+```{r cardinality matching, message=FALSE, warning=FALSE}
+# Matching with the Cardinality Method
+# Using GLPK solver
+
+# Perform cardinality matching
+m.card.out = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                     data = matching.data, 
+                     method = "cardinality", 
+                     tols = 0.01,
+                     solver = "glpk")
+
+# Summarize the matching results
+summary(m.card.out, un = FALSE)
+
+# Plot balance for unmatched variables
+plot(summary(m.card.out), var.order = "unmatched")
+
+# Perform cardinality matching with exact matching on the capital area indicator
+m.card.out1 = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                      data = matching.data, 
+                      method = "cardinality", 
+                      tols = 0.01,
+                      solver = "glpk", 
+                      exact = ~ca)
+
+# Summarize the matching results with exact matching
+summary(m.card.out1, un = FALSE)
+
+# Plot balance for unmatched variables after exact matching
+plot(summary(m.card.out1), var.order = "unmatched")
+
+# Re-match to improve balance within pairs using the Optimal method
+m.card.re = matchit(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+                     data = matching.data, 
+                     method = "optimal", 
+                     distance = "mahalanobis",
+                     discard = m.card.out1$weights == 0)
+
+# Summarize the re-matching results
+summary(m.card.re, un = FALSE)
+
+# Plot balance for unmatched variables after re-matching
+plot(summary(m.card.re), var.order = "unmatched")
+
+# Create a matched data set
+m.card = match.data(m.card.re)
+
+# Display balance table with specified thresholds
+bal.tab(m.card.re, thresholds = c(m = 0.1), un = TRUE)
+```
+
+
+# love plots
+
+```{r love plot, message=FALSE, warning=FALSE}
+new.names <- c(ca = "Living inside capital area (Y/N)",
+               income = "Household income",
+               Fschool_4 = "Father’s education level: high school and below",
+               Fschool_5 = "Father’s education level: associate",
+               Fschool_6 = "Father’s education level: bachelor",
+               Fschool_7 = "Father’s education level: post-graduate",
+               Mschool_4 = "Mother’s education level: high school and below",
+               Mschool_5 = "Mother’s education level: associate",
+               Mschool_6 = "Mother’s education level: bachelor",
+               Mschool_7 = "Mother’s education level: post-graduate",
+               Kacs = "Child's literacy",
+               Fstress = "Father's stress"
+)
+
+love.plot(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+          data = matching.data, estimand = "ATT",
+          stats = "mean.diffs",
+          weights = list(w1 = get.w(psm.out),
+                         w2 = get.w(cbpsm.out),
+                         w3 = get.w(mc.out3),
+                         w4 = get.w(cem.out),
+                         w5 = get.w(m.card.re)),
+          var.order = "unadjusted",
+          stars = "raw",
+          binary = "std",
+          abs = TRUE,
+          line = FALSE, 
+          thresholds = c(m = .1),
+          var.names = new.names,
+#          colors = c("darkgrey", "red", "blue", "darkgreen", "Yellow", "purple"),
+          sample.names = c("Raw", "PSM", "CBPSM", "Caliper", "CEM", "Cardinality"),
+          position = "bottomright",
+          limits = c(0, 1.05)) +
+  theme(legend.position = c(.87, .27),
+        legend.box.background = element_rect(), 
+        legend.box.margin = margin(1, 1, 1, 1))
+```
