@@ -1,0 +1,219 @@
+\documentclass{article}
+\usepackage{caption}
+\usepackage{threeparttable}
+\usepackage{hhline}
+\usepackage{xcolor}
+
+\begin{document}
+
+\section*{Tables}
+
+\begin{table}[t]
+\caption{Summary statistics} \label{tb2}
+\footnotesize
+\centering
+{\tabcolsep=13pt
+\begin{tabular}{l||c|c|c}
+\hline
+Covariates                &           & 처리군 $(N_1=441)$                & 대조군 $(N_0=512)$                  \\ \hhline{=#=|=|=} 
+**유아 행복감                  & Mean (SD) & 26.091 (2.563)      & 25.979 (2.498)       \\ \hline
+유아 문해 및 언어능력              & Mean (SD) & 53.971 (11.137)     & 53.246 (11.979)      \\ \hline
+*유아 자아존중감                 & Mean (SD) & 59.968 (6.436)      & 60.562 (7.140)       \\ \hline
+*유아 사회적유능감 (주장성)          & Mean (SD) & 12.49 (2.135)       & 12.26 (2.284)        \\ \hline
+아버지 양육스트레스                & Mean (SD) & 26.011 (6.692)      & 26.041 (6.451)       \\ \hline
+*아버지 행복감                  & Mean (SD) & 21.138 (4.202)      & 21.479 (3.910)       \\ \hline
+*아버지 애정적 부모간양육행동          & Mean (SD) & 20.556 (4.334)      & 21.053 (3.913)       \\ \hline
+\multirow{4}{*}{아버지 최종학력} & 고등학교 졸업   & 29\%                & 25\%                 \\ \cline{2-4} 
+                          & 전문대 졸업    & 24\%                & 20\%                 \\ \cline{2-4} 
+                          & 대학교 졸업    & 39\%                & 45\%                 \\ \cline{2-4} 
+                          & 대학원 졸업    & 8\%                 & 10\%                 \\ \hline
+*어머니 양육효능감                & Mean (SD) & 49.150 (3.618)      & 48.988 (4.084)       \\ \hline
+*어머니 애정적 부모간양육행동          & Mean (SD) & 22.12 (4.136)       & 22.27 (3.649)        \\ \hline
+*어머니 행복감          & Mean (SD) & 21.054 (4.241)       & 21.008 (4.186)        \\ \hline
+*어머니 통제적 양육행동             & Mean (SD) & 20.719 (2.877)      & 20.938 (3.048)       \\ \hline
+*어머니 통합적 양육행동             & Mean (SD) & 16.490 (3.299)      & 16.719 (3.237)       \\ \hline
+\multirow{4}{*}{어머니 최종학력} & 고등학교 졸업   & 28\%                & 30\%                 \\ \cline{2-4} 
+                          & 전문대 졸업    & 32\%                & 25\%                 \\ \cline{2-4} 
+                          & 대학교 졸업    & 35\%                & 40\%                 \\ \cline{2-4} 
+                          & 대학원 졸업    & 5\%                 & 5\%                  \\ \hline
+*교사 유아의 기관선호도             & Mean (SD) & 8.442 (1.065)       & 8.396 (1.128)        \\ \hline
+*월별 아파트 매매가격 평균            & Mean (SD) & 187029.5 (79591.08) & 275061.3 (163358.60) \\ \hline
+가구 월 평균 소득                 & Mean (SD) & 447.141 (191.657)   & 437.559 (170.110)    \\ \hline
+\multirow{2}{*}{수도권/비수도권} & 수도권       & 30\%                & 51\%                 \\ \cline{2-4} 
+                          & 비수도권      & 70\%                & 49\%                 \\ \hline
+\multicolumn{4}{l}{\scriptsize **outcome, *Additional predictors for the regression model}
+\end{tabular}
+}
+\end{table}
+
+\begin{table}[t]
+\caption{{\color{ao}Results from regression adjustment}} \label{tbRA1}
+\footnotesize
+\centering
+{\tabcolsep=16.5pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+     & ATE    & {\color{ao}SE}    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+Regression Adjustment  & 0.096 & 0.156 & -0.210      & 0.402       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Results from the weighting methods based on propensity score} \label{tb3}
+\footnotesize
+\centering
+{\tabcolsep=22pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+     & ATE    & {\color{ao}SE}    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+IPW  & 0.040 & 0.227 & -0.394      & 0.497       \\ \hline
+SIPW & 0.047 & 0.168 & -0.287      & 0.372       \\ \hline
+DR   & 0.090 & 0.159 & -0.215      & 0.408       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Results from the weighting methods based on CBPS} \label{tb4}
+\footnotesize
+\centering
+{\tabcolsep=22pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+     & ATE    & SE    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+IPW  & -1.008 & 0.622 & -2.361      & 0.078       \\ \hline
+SIPW & 0.057 & 0.168 & -0.275      & 0.382       \\ \hline
+DR   & 0.090 & 0.158 & -0.213      & 0.407       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Covariate balance before matching} \label{tb5}
+\footnotesize
+\centering
+{\tabcolsep=7pt
+\begin{threeparttable}
+\begin{tabular}{cc|cc|c}
+\hline
+\multicolumn{2}{c|}{Group}                                                                                        &  처리군               & 대조군                & \multirow{3}{*}{Two sample $t$-test ($p$-value)} \\ \cline{1-4}
+\multicolumn{2}{c|}{$L_{1}$}                                                                                & \multicolumn{2}{c|}{0.95}             &                                            \\ \cline{1-4}
+\multicolumn{2}{c|}{n}                                                                                            & 441               & 512                &                                            \\ \hline
+\multirow{14}{*}{\begin{tabular}[c]{@{}c@{}}Covariates\\ Mean\\ (Standard Deviation)\end{tabular}} & 가구 월 평균 소득 & 447.14 (191.66) & 437.56 (170.11) & 0.8877                                       \\ 
+& 유아 문해 및 언어능력 & 53.97 (11.14)     & 53.25 (11.98)      & 0.90                                       \\
+& 아버지 양육 스트레스  & 26.01 (6.69)      & 26.04 (6.45)       & 0.91                                       \\
+& 수도권/비수도권\_0  & 0.70 (0.46)           & 0.49 (0.50)            & 0.94                                          \\
+& 수도권/비수도권\_1  & 0.30 (0.46)       & 0.51 (0.50)        & 0.94                                       \\
+& 아버지 최종학력\_4\tnote{1}  & 0.29 (0.45)           & 0.25 (0.43)            & 0.94                                          \\
+& 아버지 최종학력\_5  & 0.24 (0.43)       & 0.20 (0.40)        & 0.93                                       \\
+& 아버지 최종학력\_6  & 0.39 (0.49)       & 0.45 (0.50)        & 0.94                                       \\
+& 아버지 최종학력\_7  & 0.08 (0.27)       & 0.10 (0.30)        & 0.90                                       \\
+& 어머니 최종학력\_4\tnote{2}  & 0.28 (0.45)           & 0.30 (0.46)            & 0.94                                          \\
+& 어머니 최종학력\_5  & 0.32 (0.47)       & 0.25 (0.44)        & 0.94                                       \\
+& 어머니 최종학력\_6  & 0.35 (0.48)       & 0.40 (0.49)        & 1.00                                       \\
+& 어머니 최종학력\_7  & 0.05 (0.22)       & 0.05 (0.22)        & 1.00                                       \\ \hline
+\end{tabular}
+\begin{tablenotes}
+    \item[1] 4-7: 고등학교 졸업, 전문대 졸업, 대학교 졸업, 대학원 졸업 순
+    \item[2] 4-7: 고등학교 졸업, 전문대 졸업, 대학교 졸업, 대학원 졸업 순
+  \end{tablenotes}
+\end{threeparttable}}
+\end{table}
+
+\begin{table}[t]
+\caption{Covariate balance after matching} \label{tb6}
+\footnotesize
+\centering
+{\tabcolsep=7pt
+\begin{tabular}{cc|ccccc}
+\hline
+\multicolumn{2}{c|}{Method}                                                                                   & PSM       & CBPSM     & Caliper  & CEM      & Cardinality \\ \hline
+\multicolumn{2}{c|}{Matched pairs}                                                                            & 441      & 441      & 441      & 101       & 385         \\ \hline
+\multicolumn{2}{c|}{$L_{1}$}                                                                            & 0.95    & 0.95    & 0.94    & 0.82    & 0.96       \\ \hline
+\multirow{14}{*}{\begin{tabular}[c]{@{}c@{}}Covariates\\ Differences\\ ($p$-value)\end{tabular}} & 가구 월 평균 소득  & -0.00 (0.97) & 0.01 (0.89) & 0.02 (0.76) & 0.01 (0.95) & 0.01 (0.89)    \\
+& 유아 문해 및 언어능력 & 0.03 (0.68)  & 0.05 (0.49)  & 0.04 (0.55)  & -0.06 (0.69) & 0.01 (0.90)     \\
+& 아버지 양육 스트레스  & -0.02 (0.78) & 0.01 (0.86) & -0.01 (0.86) & 0.05 (0.71)  & -0.01 (0.91)     \\
+& 수도권/비수도권\_0  & 0.28 (0.00)  & 0.28 (0.00)  & 0.28 (0.00)  & 0.00 (1.00)  & 0.01 (0.94)    \\
+& 수도권/비수도권\_1  & -0.28 (0.00) & -0.28 (0.00) & -0.28 (0.00) & 0.00 (1.00)  & -0.01 (0.94)     \\
+& 아버지 최종학력\_4  & 0.02 (0.77)  & 0.03 (0.65)  & 0.01 (0.94)  & 0.00 (1.00)  & 0.01 (0.94)     \\
+& 아버지 최종학력\_5  & 0.05 (0.47)  & 0.05 (0.42)  & 0.03 (0.63)  & 0.00 (1.00)  & 0.01 (0.93)    \\
+& 아버지 최종학력\_6  & -0.04 (0.54) & -0.05 (0.49) & -0.04 (0.54) & 0.00 (1.00)  & -0.01 (0.94)     \\
+& 아버지 최종학력\_7  & -0.03 (0.63) & -0.05 (0.47)    & 0.02 (0.8)  & 0.00 (1.00)  & -0.01 (0.90)    \\
+& 어머니 최종학력\_4  & -0.06 (0.42) & -0.03 (0.66) & -0.09 (0.19) & 0.00 (1.00)  & -0.01 (0.94)    \\
+& 어머니 최종학력\_5  & 0.07 (0.27)  & 0.07 (0.27)  & 0.08 (0.21)  & 0.00 (1.00)  & 0.01 (0.94)     \\
+& 어머니 최종학력\_6  & -0.01 (0.83) & -0.03 (0.62)  & 0.01 (0.89) & 0.00 (1.00)  & 0.00 (1.00)     \\
+& 어머니 최종학력\_7  & -0.01 (0.88)  & -0.02 (0.77)  & -0.01 (0.88)  & 0.00 (1.00)  & 0.00 (1.00)     \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Results from the matching methods based on propensity score} \label{tb7}
+\footnotesize
+\centering
+{\tabcolsep=20pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+            & ATT   & SE    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+PSM          & 0.155 & 0.142 & -0.185      & 0.494       \\ \hline
+CBPSM        & 0.158 & 0.167 & -0.181      & 0.498       \\ \hline
+Caliper     & 0.103 & 0.170 & -0.233      & 0.440       \\ \hline
+CEM         & -0.059 & 0.327 & -0.716      & 0.597       \\ \hline
+Cardinality & 0.044 & 0.175 & -0.312      & 0.400       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{{\color{ao}Results from regression adjustment}} \label{tbRA2}
+\footnotesize
+\centering
+{\tabcolsep=16.5pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+     & ATE    & SE    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+Regression Adjustment  & -0.069 & 0.25 & -0.560      & 0.422       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Results from the weighting methods based on propensity score} \label{tb8}
+\footnotesize
+\centering
+{\tabcolsep=22pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+     & ATE    & SE    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+IPW  & -0.628 & 1.030 & -2.532      & 1.507       \\ \hline
+SIPW & -0.107 & 0.303 & -0.745      & 0.443       \\ \hline
+DR   & -0.060 & 0.302 & -0.700      & 0.484       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Results from the weighting methods based on CBPS} \label{tb9}
+\footnotesize
+\centering
+{\tabcolsep=22pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+     & ATE    & SE    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+IPW  & -1.592 & 0.848 & -3.541      & -0.217       \\ \hline
+SIPW & -0.097 & 0.289 & -0.696      & 0.435       \\ \hline
+DR   & -0.070 & 0.282 & -0.671      & 0.432       \\ \hline
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\caption{Results from the matching methods based on propensity score} \label{tb10}
+\footnotesize
+\centering
+{\tabcolsep=20pt
+\begin{tabular}{c||c|c|c|c}
+\hline
+            & ATT   & SE    & 95\% Lower Bound & 95\% Upper Bound \\ \hhline{=#=|=|=|=}
+PSM          & -0.051 & 0.276 & -0.583     & 0.481       \\ \hline
+CBPSM        & -0.054 & 0.278 & -0.585     & 0.478       \\ \hline
+Caliper     & -0.033 & 0.271 & -0.563      & 0.497       \\ \hline
+CEM         & -0.850   & 0.524    & -1.930          & 0.230          \\ \hline
+Cardinality & -0.178 & 0.318 & -0.773      & 0.417       \\ \hline
+\end{tabular}}
+\end{table}
+
+\end{document}
