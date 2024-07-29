@@ -4,7 +4,7 @@ This directory contains datasets used in the analysis. Each dataset is described
 
 ## Datasets
 
-### 1. `data/w7_2014_data_220324.dta.zip`
+### 1. `w7_2014_data_220324.dta.zip`
 **Description:**
 - **Name:** 한국아동패널 7차자료 (The 7th Wave of the Panel Study on Korean Children, PSKC)
 - **Content:** This dataset includes information on child’s happiness and related variables from the 7th wave of the Panel Study on Korean Children (PSKC).
