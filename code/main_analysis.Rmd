@@ -1,13 +1,24 @@
 ---
-title: "urban-parks-childrens-happiness"
+title: "Main Analysis"
+author: "Nayeon Kwon"
+date: "`r Sys.Date()`"
 output:
-  html_document: default
-  pdf_document: default
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies: ["fontspec"]
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width = 7, # Width in inches
+  fig.height = 5 # Height in inches
+)
+```
+
 
 # Load data
 
-```{r load data, message=FALSE, warning=FALSE}
+```{r load-data, message=FALSE, warning=FALSE}
 # Load necessary libraries
 # Uncomment the following line to install any missing packages
 # install.packages(c("tidyverse", "readxl", "haven", "CBPS", "lubridate", "skimr", "tableone",
@@ -29,7 +40,7 @@ shp2 <- read.csv("data/shp2.csv", header = TRUE, fileEncoding = "euc-kr")
 
 # Load packages
 
-```{r packages, message=FALSE, warning=FALSE}
+```{r load-packages, message=FALSE, warning=FALSE}
 # Load Packages
 library(lubridate)
 library(skimr)
@@ -88,7 +99,7 @@ merged <- left_join(x = extra, y = shp2, by = 'region')
 
 # test
 
-```{r test, message=FALSE, warning=FALSE}
+```{r test, message=FALSE, warning=FALSE, results='hide'}
 # Define the columns for latitude and longitude
 ll <- c('x', 'y')
 
@@ -115,7 +126,7 @@ merged$adj5km
 
 # pre-processing (continued)
 
-```{r pre-processing, message=FALSE, warning=FALSE}
+```{r pre-processing-2, message=FALSE, warning=FALSE}
 # install.packages("dplyr")
 library(dplyr)
 w7 = w7_2014_data_220324 %>%
@@ -232,9 +243,12 @@ merged = merged %>%
     DHu14ses006 != 99999999                    # Exclude invalid values for household income
   )
 ```
+```{r}
+
+```
 
 
-# median 기준 trt
+# Treatment allocation is based on the median
 
 ```{r median, message=FALSE, warning=FALSE}
 # Convert 'papc' into a binary variable based on its median value
@@ -261,6 +275,7 @@ table(DHu14ses006)     # Frequency table for 'DHu14ses006', excluding 99999999
 # Detach the 'merged' data frame from the R search path
 detach(merged)
 ```
+
 
 # Generate DAG
 
@@ -321,7 +336,7 @@ ggdag_status(papc.dag, use_labels = "label", text = FALSE) +
 
 # Data frame 1
 
-```{r Data frame 1, message=FALSE, warning=FALSE}
+```{r Data-frame-1, message=FALSE, warning=FALSE}
 # Extract variables from the merged dataset
 y <- merged$y                     # Child’s happiness
 papc <- merged$papc               # Treatment: Park area per capita
@@ -381,7 +396,7 @@ PSKC.data %>% skim(ca, Fschool, Mschool)
 
 # Create the dataframe with selected features and transformations
 
-```{r Data frame 2, message=FALSE, warning=FALSE}
+```{r Data-frame-2, message=FALSE, warning=FALSE}
 # The commented code section shows the previous approach for reference
 
 # # Select relevant features and transform the data
@@ -423,7 +438,7 @@ ggplot(merged, aes(x = papc, fill = ca)) +
 
 # Add Propensity Score (PS) and Covariate Balancing Propensity Score (CBPS) to the dataframe
 
-```{r ps and cbps, message=FALSE, warning=FALSE}
+```{r ps-cbps, message=FALSE, warning=FALSE}
 # Load necessary library
 library(CBPS)
 
@@ -523,7 +538,7 @@ df3
 
 # Regression adjustment
 
-```{r Regression adjustment, message=FALSE, warning=FALSE}
+```{r regression-adjustment, message=FALSE, warning=FALSE}
 # Fit linear model
 lm1 <- lm(
   y ~ factor(papc) + housing + ca + income + Fschool + Mschool + Kacs + Fstress +
@@ -557,7 +572,7 @@ round(1.559e-01, 3)
 
 # propensity score model
 
-```{r Estimate PS, message=FALSE, warning=FALSE}
+```{r estimate-PS, message=FALSE, warning=FALSE}
 # Estimate propensity scores (PS) using logistic regression
 propscore.model <- glm(
   factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, 
@@ -624,7 +639,7 @@ round(min(est.ps[PSKC.data$papc == 1]), 3)
 
 # ATE Calculation Using Weighting Methods by Hand with glm
 
-```{r ATE Calculation Using Weighting Methods by Hand with glm, message=FALSE, warning=FALSE}
+```{r ate-calculation-glm, message=FALSE, warning=FALSE}
 # Calculate Propensity Score Weighting
 
 # Length of the dataset
@@ -654,7 +669,7 @@ round(c(est.ATE.lm1, est.ATE.IPW, est.ATE.SPIW, est.ATE.dr), 3)
 
 # ATE Calculation Using Weighting Methods by Hand with CBPS
 
-```{r ATE Calculation Using Weighting Methods by Hand with CBPS, message=FALSE, warning=FALSE}
+```{r ate-calculation-cbps, message=FALSE, warning=FALSE}
 # CBPS model
 cbps.model = CBPS(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, ATT = 0, data = PSKC.data)
 est.cbps <- fitted(cbps.model)
@@ -684,7 +699,7 @@ round(c(est.ATE.lm1, est.ATE.IPW, est.ATE.SPIW, est.ATE.dr), 3)
 
 # Bootstrap for Confidence interval
 
-```{r Bootstrap for Confidence interval, message=FALSE, warning=FALSE}
+```{r bootstrap-for-ci, message=FALSE, warning=FALSE}
 ## bootstrap estimate of standard error for IPW & SIPW & DR
 pseudo_ATE = function(iter, PSKC.data, method = "PS") {
   
@@ -746,7 +761,7 @@ pseudo_ATE(iter = 100, PSKC.data, method = "CBPS")
 
 # The outcome model using the inverse probability weights by hand
 
-```{r IPW manually, message=FALSE, warning=FALSE}
+```{r ipw, message=FALSE, warning=FALSE}
 # Outcome Model Using Inverse Probability Weights (IPW) Manually
 
 ## Calculate IPW
@@ -775,7 +790,7 @@ bal.tab(covs, treat = PSKC.data$papc, weights = ipw.papc$ipw)
 
 # The outcome model using the inverse probability weights with packages
 
-```{r IPW with the WeightIt package, message=FALSE, warning=FALSE}
+```{r ipw-2, message=FALSE, warning=FALSE}
 # Inverse Probability Weights (IPW) with Propensity Score and Covariate Balancing Propensity Score (CBPS)
 
 ## Using Propensity Score (PS)
@@ -833,7 +848,7 @@ bal.tab(covs, treat = PSKC.data$papc, weights = weights_cbps$weights)
 
 # Prepare data for matching by selecting relevant columns
 
-```{r packages, message=FALSE, warning=FALSE}
+```{r data-prep, message=FALSE, warning=FALSE, results='hide'}
 # Exclude specific columns from the dataset
 matching.data <- subset(
   PSKC.data,
@@ -849,7 +864,7 @@ matching.data
 
 # Method: PSM
 
-```{r PSM, message=FALSE, warning=FALSE}
+```{r psm, message=FALSE, warning=FALSE}
 # Propensity Score Matching (PSM)
 
 # Calculate propensity score distance
@@ -880,7 +895,7 @@ plot(
 
 # Method: CBPSM
 
-```{r CBPSM, message=FALSE, warning=FALSE}
+```{r cbpsm, message=FALSE, warning=FALSE}
 # Covariate Balancing Propensity Score Matching (CBPSM)
 
 # Fit CBPS model
@@ -916,7 +931,7 @@ plot(
 # Method: Propensity Score Caliper Matching
 # Using Rank-Based Mahalanobis Distance Within Propensity Score Calipers
 
-```{r Mahalanobis distance, message=FALSE, warning=FALSE}
+```{r mahalanobis-distance, message=FALSE, warning=FALSE}
 # Mahalanobis Distance Matching
 
 # Compute the rank-based Mahalanobis distance
@@ -968,7 +983,7 @@ plot(summary(mc.out3), var.order = "unmatched")
 
 # Method: CEM
 
-```{r CEM, message=FALSE, warning=FALSE}
+```{r cem, message=FALSE, warning=FALSE}
 # Coarsened Exact Matching (CEM) on Covariates, Excluding Capital Area Indicator
 # Grouping Parent’s Education: University and Graduate School Combined
 
@@ -985,7 +1000,7 @@ plot(summary(cem.out), var.order = "unmatched")
 
 # Method: cardinality matching
 
-```{r cardinality matching, message=FALSE, warning=FALSE}
+```{r cardinality, message=FALSE, warning=FALSE}
 # Load necessary library
 # install.packages("Rglpk")
 library(Rglpk)
@@ -1016,7 +1031,7 @@ m.card = match.data(m.card.re)
 
 # plots
 
-```{r love plot, message=FALSE, warning=FALSE}
+```{r love-plot, message=FALSE, warning=FALSE}
 new.names <- c(ca = "Living inside capital area (Y/N)",
                income = "Household income",
                Fschool_4 = "Father’s education level: high school and below",
@@ -1057,7 +1072,7 @@ love.plot(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
 
 # Separate optimal pair matching for ca and non-ca
 
-```{r Separate optimal pair matching, message=FALSE, warning=FALSE}
+```{r separate-optimal-pair-matching, message=FALSE, warning=FALSE}
 # Matching with separate treatments: Capital Area vs. Non-Capital Area
 # Since the outcome was not used in the matching process, it's fine to repeat the matching process multiple times
 # Split the matching problem into two cases: Capital Area (ca) and Non-Capital Area (non-ca)
@@ -1081,10 +1096,11 @@ plot(
 )
 ```
 
+
 # L1 Distance Calculation
 # Load necessary packages
 
-```{r packages, message=FALSE, warning=FALSE}
+```{r l1, message=FALSE, warning=FALSE}
 # Check if Tcl/Tk capabilities are available
 capabilities("tcltk")
 
@@ -1101,7 +1117,7 @@ library(cem)      # For Coarsened Exact Matching (CEM)
 
 # Imbalance Check
 
-```{r Imbalance Check, message=FALSE, warning=FALSE}
+```{r imbalance-check, message=FALSE, warning=FALSE}
 # Raw Data Imbalance
 # Calculate imbalance metrics for the raw data before matching
 raw = imbalance(matching.data$papc, matching.data, drop = c("y", "papc"))
