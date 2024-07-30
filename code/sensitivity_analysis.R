@@ -631,3 +631,45 @@ love.plot(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
   theme(legend.position = c(.87, .27),
         legend.box.background = element_rect(), 
         legend.box.margin = margin(1, 1, 1, 1))
+
+
+# Separate optimal pair matching for ca and non-ca
+
+# Matching with separate treatments: Capital Area vs. Non-Capital Area
+# Since the outcome was not used in the matching process, it's fine to repeat the matching process multiple times
+# Split the matching problem into two cases: Capital Area (ca) and Non-Capital Area (non-ca)
+
+# Perform exact matching with the Capital Area indicator
+m.exact.out <- matchit(
+  formula = factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+  data = PSKC.data,
+  method = "optimal",
+  distance = "robust_mahalanobis",
+  exact = ~ ca
+)
+
+# Summary of the matching results
+summary(m.exact.out, un = FALSE)
+
+# Plot the results of the matching
+plot(
+  summary(m.exact.out),
+  var.order = "unmatched"
+)
+
+
+# L1 Distance Calculation
+# Load necessary packages
+
+# Check if Tcl/Tk capabilities are available
+capabilities("tcltk")
+
+# List directories and check for Tcl/Tk libraries
+system("ls -ld /usr/local /usr/local/lib /usr/local/lib/libtcl*")
+
+# Install required packages (uncomment if needed)
+# install.packages(c("lattice", "cem"))
+
+# Load libraries
+library(lattice)  # For lattice-based plotting
+library(cem)      # For Coarsened Exact Matching (CEM)

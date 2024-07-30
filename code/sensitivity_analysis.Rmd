@@ -1,9 +1,22 @@
 ---
 title: "sensitivity-analysis"
-output: pdf_document
+author: "Nayeon Kwon"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    extra_dependencies: ["fontspec"]
 ---
 
-```{r}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  fig.width = 7, # Width in inches
+  fig.height = 5 # Height in inches
+)
+```
+
+
+```{r load-data, message=FALSE, warning=FALSE}
 # This script performs a sensitivity analysis for the given dataset.
 # Ensure that the data preprocessing has been completed using the main_analysis.Rmd script
 # before running this sensitivity analysis.
@@ -55,7 +68,7 @@ library(sandwich)
 
 # Quantile-based Treatment Assignment
 
-```{r quantiles, message=FALSE, warning=FALSE}
+```{r quantile-based, message=FALSE, warning=FALSE}
 # Calculate quantiles for papc
 quantiles <- quantile(merged$papc)
 round_quantiles <- round(quantiles, 3)
@@ -80,7 +93,7 @@ table(merged2$papc)
 
 # Data frame 1
 
-```{r Data frame 1, message=FALSE, warning=FALSE}
+```{r data-frame-1, message=FALSE, warning=FALSE}
 # Define variables for propensity score model
 y <- merged2$y  # 아동의 행복감
 papc <- merged2$papc  # Treatment: 인당 공원면적
@@ -126,7 +139,7 @@ PSKC.data %>% skim(ca, Fschool, Mschool)
 
 # PS, CBPS
 
-```{r ps and cbps, message=FALSE, warning=FALSE}
+```{r ps-cbps, message=FALSE, warning=FALSE}
 library(CBPS)
 
 PSKC.data <- PSKC.data %>%
@@ -150,9 +163,10 @@ PSKC.data$TrtLevel <- factor(PSKC.data$papc)
 PSKC.data %>% skim(TrtLevel)
 ```
 
+
 # Plots
 
-```{r Plots, message=FALSE, warning=FALSE}
+```{r plots, message=FALSE, warning=FALSE}
 # Plot for Y
 ggplot(PSKC.data, aes(y, fill = TrtLevel)) +
   geom_density(alpha = 0.3) +
@@ -198,9 +212,9 @@ df2 <- PSKC.data %>%
 df2
 ```
 
-# regression adjustment
+# Regression adjustment
 
-```{r Regression adjustment, message=FALSE, warning=FALSE}
+```{r regression-adjustment, message=FALSE, warning=FALSE}
 # Linear Model with Multiple Predictors
 lm1 <- lm(
   y ~ factor(papc) + housing + ca + income + Fschool + Mschool + Kacs + Fstress +
@@ -232,7 +246,7 @@ round(2.499e-01, 3)
 
 # propensity score model
 
-```{r Estimate PS, message=FALSE, warning=FALSE}
+```{r estimate-ps, message=FALSE, warning=FALSE}
 # Propensity Score Estimation
 propscore.model <- glm(
   factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, 
@@ -282,7 +296,7 @@ round(min(est.cbps[PSKC.data$papc == 1]), 3)
 
 # ATE Calculation Using Weighting Methods by Hand with glm
 
-```{r ATE Calculation Using Weighting Methods by Hand with glm, message=FALSE, warning=FALSE}
+```{r ate-calculation-glm, message=FALSE, warning=FALSE}
 # Propensity Score Model
 # propscore.model = glm(factor(papc) ~ ca + income + Fschool + Mschool
 #                      + Kacs + Fstress, family = binomial(link = "logit"), 
@@ -312,9 +326,10 @@ est.ATE.dr <- est.y1.dr - est.y0.dr
 round(c(est.ATE.lm1, est.ATE.IPW, est.ATE.SPIW, est.ATE.dr), 3)
 ```
 
+
 # ATE Calculation Using Weighting Methods by Hand with CBPS
 
-```{r ATE Calculation Using Weighting Methods by Hand with CBPS, message=FALSE, warning=FALSE}
+```{r ate-calculation-cbps, message=FALSE, warning=FALSE}
 # CBPS Model
 cbps.model <- CBPS(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress, ATT = 0, data = PSKC.data)
 est.cbps <- fitted(cbps.model)
@@ -343,9 +358,10 @@ est.ATE.dr <- est.y1.dr - est.y0.dr
 round(c(est.ATE.lm1, est.ATE.IPW, est.ATE.SPIW, est.ATE.dr), 3)
 ```
 
+
 # Bootstrap for Confidence interval
 
-```{r Bootstrap for Confidence interval, message=FALSE, warning=FALSE}
+```{r bootstrap-for-cil, message=FALSE, warning=FALSE}
 ## Bootstrap Estimate of Standard Error for IPW, SIPW, and DR
 pseudo_ATE <- function(iter, PSKC.data, method = "PS") {
   
@@ -410,7 +426,7 @@ pseudo_ATE(iter = 100, PSKC.data, method = "CBPS")
 
 # The outcome model using the inverse probability weights by hand
 
-```{r IPW with the WeightIt package, message=FALSE, warning=FALSE}
+```{r ipw, message=FALSE, warning=FALSE}
 # Outcome Model Using Inverse Probability Weights (IPW) Manually
 
 ## Calculate IPW
@@ -441,7 +457,7 @@ bal.tab(covs, treat = PSKC.data$papc, weights = ipw.papc$ipw)
 # Using only the propensity score
 # Propensity Score Matching (PSM)
 
-```{r PSM, message=FALSE, warning=FALSE}
+```{r psm, message=FALSE, warning=FALSE}
 # Estimate the propensity score model
 # propscore.model = glm(factor(papc) ~ ca + income + Fschool + Mschool
 #                       + Kacs + Fstress, family = binomial(link = "logit"), x = TRUE, data = PSKC.data)
@@ -463,10 +479,11 @@ plot(summary(psm.out), var.order = "unmatched")
 bal.tab(psm.out, thresholds = c(m = 0.1), un = TRUE)
 ```
 
+
 # Covariate Balancing Propensity Score Matching (CBPSM)
 # Using the Matchit Package
 
-```{r CBPSM, message=FALSE, warning=FALSE}
+```{r cbpsm, message=FALSE, warning=FALSE}
 # Perform Covariate Balancing Propensity Score Matching (CBPSM)
 # Using optimal matching and the "cbps" distance method to estimate the Average Treatment Effect on the Treated (ATT)
 
@@ -486,10 +503,11 @@ plot(summary(cbpsm.out), var.order = "unmatched")
 bal.tab(cbpsm.out, thresholds = c(m = 0.1), un = TRUE)
 ```
 
+
 # Method: Propensity Score Caliper Matching
 # Using Rank-Based Mahalanobis Distance Within Propensity Score Calipers
 
-```{r Mahalanobis distance, message=FALSE, warning=FALSE}
+```{r mahalanobis-distance, message=FALSE, warning=FALSE}
 # Compute the Rank-Based Mahalanobis Distance
 # Uncomment if using the optmatch package for computation.
 # smahal.dist <- optmatch::match_on(
@@ -534,7 +552,7 @@ bal.tab(mc.out3, thresholds = c(m = 0.1), un = TRUE)
 
 # Subset for matching
 
-```{r packages, message=FALSE, warning=FALSE}
+```{r subset, message=FALSE, warning=FALSE}
 # Subset the PSKC.data data frame by excluding specified columns
 matching.data <- subset(PSKC.data, 
                         select = -c(housing, Msff, Mhappiness, Mcrs, Maff, Minteg, 
@@ -544,9 +562,10 @@ matching.data <- subset(PSKC.data,
 matching.data
 ```
 
+
 # Method: CEM
 
-```{r CEM, message=FALSE, warning=FALSE}
+```{r cem, message=FALSE, warning=FALSE}
 # Coarsened Exact Matching (CEM) on covariates
 # Excluding the capital area indicator variable
 # Group parental education into "university graduate" and "graduate school graduate"
@@ -571,9 +590,10 @@ plot(summary(cem.out), var.order = "unmatched")
 bal.tab(cem.out, thresholds = c(m = 0.1), un = TRUE)
 ```
 
+
 # Cardinality matching
 
-```{r cardinality matching, message=FALSE, warning=FALSE}
+```{r cardinality, message=FALSE, warning=FALSE}
 # Matching with the Cardinality Method
 # Using GLPK solver
 
@@ -627,7 +647,7 @@ bal.tab(m.card.re, thresholds = c(m = 0.1), un = TRUE)
 
 # love plots
 
-```{r love plot, message=FALSE, warning=FALSE}
+```{r love-plot, message=FALSE, warning=FALSE}
 new.names <- c(ca = "Living inside capital area (Y/N)",
                income = "Household income",
                Fschool_4 = "Father’s education level: high school and below",
@@ -664,4 +684,50 @@ love.plot(factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
   theme(legend.position = c(.87, .27),
         legend.box.background = element_rect(), 
         legend.box.margin = margin(1, 1, 1, 1))
+```
+
+
+# Separate optimal pair matching for ca and non-ca
+
+```{r separate-optimal-pair-matching, message=FALSE, warning=FALSE}
+# Matching with separate treatments: Capital Area vs. Non-Capital Area
+# Since the outcome was not used in the matching process, it's fine to repeat the matching process multiple times
+# Split the matching problem into two cases: Capital Area (ca) and Non-Capital Area (non-ca)
+
+# Perform exact matching with the Capital Area indicator
+m.exact.out <- matchit(
+  formula = factor(papc) ~ ca + income + Fschool + Mschool + Kacs + Fstress,
+  data = PSKC.data,
+  method = "optimal",
+  distance = "robust_mahalanobis",
+  exact = ~ ca
+)
+
+# Summary of the matching results
+summary(m.exact.out, un = FALSE)
+
+# Plot the results of the matching
+plot(
+  summary(m.exact.out),
+  var.order = "unmatched"
+)
+```
+
+
+# L1 Distance Calculation
+# Load necessary packages
+
+```{r l1, message=FALSE, warning=FALSE}
+# Check if Tcl/Tk capabilities are available
+capabilities("tcltk")
+
+# List directories and check for Tcl/Tk libraries
+system("ls -ld /usr/local /usr/local/lib /usr/local/lib/libtcl*")
+
+# Install required packages (uncomment if needed)
+# install.packages(c("lattice", "cem"))
+
+# Load libraries
+library(lattice)  # For lattice-based plotting
+library(cem)      # For Coarsened Exact Matching (CEM)
 ```
