@@ -39,6 +39,6 @@ This repository contains supplemental materials and documentation for the thesis
 
 ## Notes
 
-- For further details or queries about the thesis, please contact [Kwon Nayeon] at [nayeonkn0330@gmail.com].
+- For further details or queries about the thesis, please contact Nayeon Kwon at [nayeonkn0330@gmail.com].
 
 Thank you for reviewing this research!
