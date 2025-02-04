@@ -61,9 +61,3 @@ install.packages(c(
 - RMarkdown (`.Rmd`) files are the primary analysis documents
 - R scripts (`.R`) provide alternative format for the same analyses
 - Please refer to `.Rmd` files if encountering issues with `.R` scripts
-
-## License
-This code is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For technical questions: nayeon.k.datacareer@gmail.com
