@@ -82,4 +82,4 @@ install.packages(c(
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or comments, please contact [nayeonkn0330@gmail.com].
+For any questions or comments, please contact [nayeon.k.datacareer@gmail].
