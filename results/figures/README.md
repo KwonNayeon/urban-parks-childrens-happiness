@@ -30,9 +30,3 @@ This directory contains visualization outputs used in the thesis "Causal Effect 
 - `Figure E1-a_Histogram of PS distribution.png`
 - `Figure E1-b_Histogram of CBPS distribution.png`
 - `Figure E2_absolute SMD before and after matching.png`
-
-## License
-This documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For inquiries: nayeon.k.datacareer@gmail.com
