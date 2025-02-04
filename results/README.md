@@ -24,9 +24,3 @@ This directory contains the tables, figures, and analysis documents for the thes
 - Compiled R Markdown output
 - Complete analysis workflow
 - Detailed results and visualizations
-
-## License
-This documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For inquiries: nayeon.k.datacareer@gmail.com
