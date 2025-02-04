@@ -24,9 +24,3 @@ This directory contains the primary thesis document and supporting materials for
 - Bibliography file
 - Citation management
 - BibTeX format
-
-## License
-This documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For inquiries: nayeon.k.datacareer@gmail.com
