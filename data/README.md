@@ -30,9 +30,3 @@ This directory houses the primary datasets used in analyzing the causal relation
 - Stata files (`.dta`) can be accessed using Stata or compatible statistical software
 - Excel files (`.xlsx`) require spreadsheet software
 - CSV files can be opened with any standard data analysis tool
-
-## License
-This data documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For data-related inquiries: nayeon.k.datacareer@gmail.com
