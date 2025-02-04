@@ -1,14 +1,14 @@
-# Causal Effect of Urban Parks on Children’s Happiness
+# Causal Effect of Urban Parks on Children's Happiness
 
 ## Overview
-This repository contains the thesis titled "Causal Effect of Urban Parks on Children’s Happiness," including data, results, and code.
+This repository contains my research thesis investigating the causal relationship between urban park accessibility and children's happiness levels. Using propensity score methods, this study provides empirical evidence for urban planning policies.
 
 ## Repository Structure
-- `thesis/`: Contains the main thesis document, abstract, and references.
-- `data/`: Contains raw and processed datasets used in the analysis.
-- `results/`: Contains figures and tables generated from the analysis.
-- `code/`: Contains R scripts and notebooks for data preprocessing, analysis, and creating plots.
-- `award/`: Contains documents related to the awards and recognitions received for this work.
+- `thesis/`: Main thesis document and references
+- `data/`: Analysis datasets
+- `results/`: Output figures and tables
+- `code/`: R scripts for analysis
+- `award/`: Awards and recognition
 
 ## Getting Started
 1. Clone the repository:
@@ -19,67 +19,22 @@ This repository contains the thesis titled "Causal Effect of Urban Parks on Chil
     ```bash
     cd urban-parks-childrens-happiness
     ```
+
 ## Dependencies
-
 To run the R scripts and analysis, you need the following R packages:
-
 - `tidyverse` (Includes `dplyr`, `ggplot2`, and other packages)
-- `readxl`
-- `haven`
-- `CBPS`
-- `lubridate`
-- `skimr`
-- `tableone`
-- `survey`
-- `senstrat`
-- `MASS`
-- `ggdag` (For plotting Directed Acyclic Graphs)
-- `dagitty`
-- `broom`
-- `scales`
-- `truncnorm`
-- `ipw`
-- `WeightIt`
-- `cobalt`
-- `optmatch`
-- `MatchIt`
-- `sensitivityfull`
-- `sensitivitymw`
-- `lmtest` (For `coeftest`)
-- `sandwich` (For `vcovCL`)
-
-You can install these packages in R using the following command:
-```r
-install.packages(c(
-  "tidyverse", 
-  "readxl", 
-  "haven", 
-  "CBPS", 
-  "lubridate", 
-  "skimr", 
-  "tableone", 
-  "survey", 
-  "senstrat", 
-  "MASS", 
-  "ggdag", 
-  "dagitty", 
-  "broom", 
-  "scales", 
-  "truncnorm", 
-  "ipw", 
-  "WeightIt", 
-  "cobalt", 
-  "optmatch", 
-  "MatchIt", 
-  "sensitivityfull", 
-  "sensitivitymw", 
-  "lmtest", 
-  "sandwich"
-))
-```
+- `readxl`, `haven` (For data import)
+- `CBPS`, `WeightIt`, `MatchIt` (For causal inference)
+- `lubridate`, `skimr`, `tableone` (For data processing)
+- `survey`, `senstrat`, `MASS` (For statistical analysis)
+- `ggdag`, `dagitty` (For plotting Directed Acyclic Graphs)
+- `broom`, `scales`, `truncnorm` (For data transformation)
+- `ipw`, `cobalt`, `optmatch` (For matching methods)
+- `sensitivityfull`, `sensitivitymw` (For sensitivity analysis)
+- `lmtest`, `sandwich` (For robust inference)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or comments, please contact [nayeon.k.datacareer@gmail].
+For questions about the research or collaboration opportunities, please reach out at nayeon.k.datacareer@gmail.com
