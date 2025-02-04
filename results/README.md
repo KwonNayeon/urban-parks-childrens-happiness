@@ -1,21 +1,36 @@
 # Results Directory
 
-This folder contains the `tables`, `figures`, and important analysis documents used in the thesis *"Causal Effect of Urban Parks on Children's Happiness."*
+## Overview
+This directory contains the tables, figures, and analysis documents for the thesis "Causal Effect of Urban Parks on Children's Happiness."
 
-## Subdirectories
+## Files
 
-### 1. `tables`
-- Contains LaTeX files for tables used in the manuscript.
-  - `main_results_tables.tex`: Tables presenting the primary results of the manuscript.
-  - `appendix_tables.tex`: Tables included in the appendix of the manuscript.
+### Tables
+1. `tables/main_results_tables.tex`
+- Primary results in LaTeX format
+- Used in manuscript body
 
-### 2. `figures`
-- Contains all the figures used in the thesis.
-  - **Main Document Figures**: Figures used in the main document.
-  - **Appendix Figures**: Figures included in the appendix.
+2. `tables/appendix_tables.tex`
+- Supplementary results
+- Included in manuscript appendix
 
-### 3. `analysis-docs`
-- Contains PDF documents related to the analysis.
-  - `main-analysis.pdf`: This PDF is the knit-to-PDF output of the main analysis performed for the thesis. It includes the detailed results and visualizations generated from the R Markdown analysis.
+### Figures
+1. `figures/main/`
+- Visualizations for main document
+- Primary analysis results
 
-Please refer to the respective folders for detailed descriptions and specific files.
+2. `figures/appendix/`
+- Supplementary visualizations
+- Additional analysis results
+
+### Analysis Documents
+1. `analysis-docs/main-analysis.pdf`
+- Compiled R Markdown output
+- Complete analysis workflow
+- Detailed results and visualizations
+
+## License
+This documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+For inquiries: nayeon.k.datacareer@gmail.com
