@@ -11,9 +11,3 @@ Received recognition for the research presentation on "Causal Effect of Urban Pa
 - Effective explanation of data and causal inference methodology
 - Clear communication of complex statistical concepts
 - Visual presentation of key findings through conference poster
-
-## License
-This documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For inquiries: nayeon.k.datacareer@gmail.com
