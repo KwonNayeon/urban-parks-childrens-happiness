@@ -36,9 +36,3 @@ This repository contains supplemental materials and documentation for the thesis
 
 - **References (`references.bib`)**:  
   Use this file for citation management. It contains all references used in the thesis and is formatted for use with citation tools.
-
-## Notes
-
-- For further details or queries about the thesis, please contact Nayeon Kwon at [nayeonkn0330@gmail.com].
-
-Thank you for reviewing this research!
