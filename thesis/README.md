@@ -10,7 +10,7 @@ This directory contains the primary thesis document and supporting materials for
 - Complete thesis document
 - Research methodology and findings
 
-2. `Supplemental Materials for "Causal Effect of Urban Parks on Children's Happiness".pdf`
+2. `Supplemental Materials for “Causal Effect of Urban Parks on Children’s Happiness”.pdf`
 - DAG (Directed Acyclic Graph)
 - Additional analyses
 - Supplementary figures and tables
