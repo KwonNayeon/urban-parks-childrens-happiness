@@ -1,38 +1,32 @@
-# Thesis Folder: Causal Effect of Urban Parks on Children’s Happiness
+# Thesis Directory
 
-This repository contains supplemental materials and documentation for the thesis titled **"Causal Effect of Urban Parks on Children’s Happiness"**.
+## Overview
+This directory contains the primary thesis document and supporting materials for the research on "Causal Effect of Urban Parks on Children's Happiness."
 
-## Contents
+## Files
 
-- **`Causal effect of urban parks on children’s happiness.pdf`**  
-  The main thesis document detailing the research findings, methodology, and analysis of the causal effect of urban parks on children's happiness.
+### Main Documents
+1. `Causal effect of urban parks on children's happiness.pdf`
+- Complete thesis document
+- Research methodology and findings
 
-- **`Supplemental Materials for “Causal Effect of Urban Parks on Children’s Happiness”.pdf`**  
-  Additional materials that support the thesis, including:
-  - **Directed Acyclic Graph (DAG)**: A visual representation of causal relationships used in the analysis.
-  - **Additional Analysis Results**: Results from supplementary analyses that complement the main findings.
-  - **Figures and Tables**: Additional figures and tables that could not be included in the main thesis document due to space constraints.
+2. `Supplemental Materials for "Causal Effect of Urban Parks on Children's Happiness".pdf`
+- DAG (Directed Acyclic Graph)
+- Additional analyses
+- Supplementary figures and tables
 
-- **`README.md`**  
-  This file. It provides an overview of the contents of the thesis folder.
+### Supporting Documents
+1. `abstract.md`
+- Thesis abstract
+- Available in English and Korean
 
-- **`abstract.md`**  
-  Contains the abstract of the thesis in Korean. This document provides a summary of the research, including objectives, methods, and key findings.
+2. `references.bib`
+- Bibliography file
+- Citation management
+- BibTeX format
 
-- **`references.bib`**  
-  A bibliography file that lists all the references cited in the thesis. This file is used to manage and format citations in the thesis document.
+## License
+This documentation is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Usage
-
-- **Thesis Document (`Causal effect of urban parks on children’s happiness.pdf`)**:  
-  This is the primary document for the thesis. It is a comprehensive report on the research study.
-
-- **Supplemental Materials**:  
-  Review this document for additional data and information that supports the thesis.
-
-- **`abstract.md`**  
-  - **English**: Contains the abstract of the thesis in English.
-  - **Korean**: Contains the abstract of the thesis in Korean.
-
-- **References (`references.bib`)**:  
-  Use this file for citation management. It contains all references used in the thesis and is formatted for use with citation tools.
+## Contact
+For inquiries: nayeon.k.datacareer@gmail.com
