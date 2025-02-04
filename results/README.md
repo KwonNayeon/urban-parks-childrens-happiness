@@ -15,13 +15,9 @@ This directory contains the tables, figures, and analysis documents for the thes
 - Included in manuscript appendix
 
 ### Figures
-1. `figures/main/`
-- Visualizations for main document
-- Primary analysis results
-
-2. `figures/appendix/`
-- Supplementary visualizations
-- Additional analysis results
+`figures/`
+- Complete set of thesis visualizations
+- Analysis results and supporting graphics
 
 ### Analysis Documents
 1. `analysis-docs/main-analysis.pdf`
