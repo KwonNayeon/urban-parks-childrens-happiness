@@ -1,10 +1,13 @@
 # Code Directory
 
 ## Overview
+
 This folder contains R scripts and RMarkdown files for analyzing the causal relationship between urban park accessibility and children's happiness levels. The code implements propensity score methods and sensitivity analyses.
 
 ## Files
+
 ### Analysis Scripts
+
 1. `main_analysis.Rmd`
 - Main analysis workflow in RMarkdown format
 - Includes data pre-processing, analysis, and visualization
@@ -15,6 +18,7 @@ This folder contains R scripts and RMarkdown files for analyzing the causal rela
 - Contains identical workflow to `main_analysis.Rmd`
 
 ### Sensitivity Analysis
+
 3. `sensitivity_analysis.Rmd`
 - Sensitivity analysis in RMarkdown format
 - Requires pre-processed data from `main_analysis.Rmd`
@@ -25,12 +29,14 @@ This folder contains R scripts and RMarkdown files for analyzing the causal rela
 - Mirrors `sensitivity_analysis.Rmd` functionality
 
 ### Utility Scripts
+
 5. `functions.R`
 - Contains Propensity Score Matching (PSM) functions
 - Reference implementation for understanding PSM methods
 - Supplementary to main analysis
 
 ## Dependencies
+
 Required R packages:
 ```r
 install.packages(c(
@@ -58,6 +64,7 @@ install.packages(c(
 ```
 
 ## Notes
+
 - RMarkdown (`.Rmd`) files are the primary analysis documents
 - R scripts (`.R`) provide alternative format for the same analyses
 - Please refer to `.Rmd` files if encountering issues with `.R` scripts
