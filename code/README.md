@@ -65,6 +65,6 @@ install.packages(c(
 
 ## Notes
 
-- RMarkdown (`.Rmd`) files are the primary analysis documents
-- R scripts (`.R`) provide alternative format for the same analyses
-- Please refer to `.Rmd` files if encountering issues with `.R` scripts
+- Analyses are primarily documented in **RMarkdown (.Rmd)** files.  
+- **R scripts (.R)** offer alternative versions of the same analyses.  
+- If you encounter any issues with the **.R** scripts, please refer to the corresponding **.Rmd** files.
