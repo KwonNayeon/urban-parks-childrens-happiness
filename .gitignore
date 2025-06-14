@@ -1,2 +1,7 @@
 # Ignore Mac system files
 .DS_Store
+
+# Ignore dataset
+/data/w7_2014_data_220324.dta.zip
+/data/extra2.xlsx.zip
+/data/shp2.csv
