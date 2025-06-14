@@ -7,7 +7,7 @@ This repository contains my research thesis investigating the causal relationshi
 ## Repository Structure
 
 - `thesis/`: Main thesis document and references
-- `data/`: Analysis datasets
+- `data/`: Analysis datasets (not included in the repository)
 - `results/`: Output figures and tables
 - `code/`: R scripts for analysis
 - `award/`: Awards and recognition
@@ -22,6 +22,8 @@ This repository contains my research thesis investigating the causal relationshi
     ```bash
     cd urban-parks-childrens-happiness
     ```
+3. **Note:** Data files are not included in this repository.  
+   Please obtain the required datasets from the official sources and place them in the `data/` directory before running the code.
 
 ## Dependencies
 
